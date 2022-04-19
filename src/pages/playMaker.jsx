@@ -1,5 +1,4 @@
 import React, {useRef, useState, useEffect} from "react";
-import {Link} from "react-router-dom";
 import {IconContext} from "react-icons";
 import {
     BsFillArrowLeftCircleFill,
@@ -31,16 +30,16 @@ const PlayMaker = () => {
         {x: 370, y: 302, r: 12, colour: "orange", id: 23,}
     ]);
 
-
     const [counter, setCounter] = useState(1);
+    const [total, setTotal] = useState(1);
     const increment = () => setCounter(counter + 1);
     const decrement = () => setCounter(counter - 1);
-
+    let formationChange = false;
     let isDown = false;
     let dragTarget = null;
     let startX = null;
     let startY = null;
-
+    let localCount = 0;
 
     // initialize the canvas context
     useEffect(() => {
@@ -52,12 +51,29 @@ const PlayMaker = () => {
         // get context of the canvas
 
         ctx = canvasEle.getContext('2d');
-
     });
 
     useEffect(() => {
+        loadFromLocal();
         draw();
+        countLocal();
+
     },);
+
+
+    const countLocal = () => {
+
+        Object.keys(localStorage).forEach(function (key) {
+
+            if (key.includes('formation')) {
+                localCount++;
+            }
+
+        })
+        console.log(localCount);
+        if (localCount === 0) setTotal(1);
+        else setTotal(localCount + 1);
+    }
 
     // draw rectangle
     const draw = () => {
@@ -125,7 +141,7 @@ const PlayMaker = () => {
         }
         //the rest of the circles represent the players
         else {
-            console.log(r);
+            //console.log(r);
             ctx.lineWidth = "4";
             ctx.strokeStyle = "white"
             ctx.beginPath();
@@ -157,10 +173,10 @@ const PlayMaker = () => {
             ) {
                 dragTarget = circ;
                 isTarget = true;
-                console.log(true);
                 break;
             }
         }
+        formationChange = true;
         setCircles(circles);
         return isTarget;
     };
@@ -183,7 +199,7 @@ const PlayMaker = () => {
         dragTarget.y += dy;
         draw();
     };
-    const handleMouseUp = (e) => {
+    const handleMouseUp = () => {
         dragTarget = null;
         isDown = false;
     };
@@ -191,22 +207,27 @@ const PlayMaker = () => {
         handleMouseUp(e);
     };
 
-    const saveToLocal = (e) => {
+    const saveToLocal = () => {
+        if (formationChange === false) {
+            alert("You must change the current frame before making a new one");
+            return
+        }
 
         console.log("Save to local storage");
         let formation = circles;
         localStorage.setItem("formations" + counter, JSON.stringify(formation));
+        increment();
         console.log(JSON.stringify(formation));
 
     };
 
     const loadFromLocal = () => {
-        console.log("load from local storage formation" + counter);
+        console.log("LOAD FRAME: " + counter);
         let json = localStorage.getItem("formations" + counter);
         if (null === json) {
             return 'empty';
         }
-        console.log("Loading from localStorage.");
+        console.log("Loading.......");
         const formation = JSON.parse(json);
 
         console.log(json);
@@ -214,35 +235,49 @@ const PlayMaker = () => {
         for (let i = 0; i < formation.length; i++) {
             circles[i] = formation[i];
         }
-
     };
 
     const PreviousFormation = () => {
-
         if (counter > 1) {
-            decrement();
+            loadFromLocal();
+            draw();
+            decrement()
         }
-        console.log("Loading previous formation" + counter);
-        loadFromLocal();
-        draw();
+
+
     };
 
 
     const NextFormation = () => {
-
         if (loadFromLocal() === 'empty') {
-            alert('You must make a change to the frame before moving onto the next');
+            alert('You are at the last frame');
             return
         }
-        increment();
+
         //currentFrame[0]++;
-        console.log("Loading next formation" + counter);
+        //console.log("Loading next formation" + counter);
         loadFromLocal();
         draw();
+        increment();
     }
 
+    const play = () => {
 
-    loadFromLocal();
+
+        Object.keys(localStorage).forEach(function (key) {
+
+            setTimeout(() => {
+                if (key.includes('formation')) {
+                    loadFromLocal();
+                    draw();
+                    increment();
+                }
+            }, 1000);
+
+        })
+        console.log('finished');
+    }
+
 
     return (
 
@@ -268,8 +303,8 @@ const PlayMaker = () => {
                         <button>
                             <BsFillTrashFill/>
                         </button>
-                        <button>{counter}</button>
-                        <button>
+                        <button>{counter + " of " + total}</button>
+                        <button onMouseDown={play}>
                             <BsPlayBtn/>
                         </button>
 
