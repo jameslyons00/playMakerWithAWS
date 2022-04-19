@@ -18,16 +18,16 @@ const PlayMaker = () => {
 
 
     const [circles, setCircles] = useState([
-        {x: 370, y: 30, r: 15, colour: "green", id: 1},
-        {x: 370, y: 85, r: 15, colour: "green", id: 2},
-        {x: 370, y: 140, r: 15, colour: "green", id: 3},
-        {x: 370, y: 195, r: 15, colour: "green", id: 4},
-        {x: 370, y: 250, r: 15, colour: "green", id: 5},
-        {x: 370, y: 355, r: 15, colour: "#87CEEB", id: 1},
-        {x: 370, y: 410, r: 15, colour: "#87CEEB", id: 2},
-        {x: 370, y: 465, r: 15, colour: "#87CEEB", id: 3},
-        {x: 370, y: 520, r: 15, colour: "#87CEEB", id: 4},
-        {x: 370, y: 575, r: 15, colour: "#87CEEB", id: 5},
+        {x: 370, y: 30, r: 13, colour: "green", id: 1},
+        {x: 370, y: 85, r: 13, colour: "green", id: 2},
+        {x: 370, y: 140, r: 13, colour: "green", id: 3},
+        {x: 370, y: 195, r: 13, colour: "green", id: 4},
+        {x: 370, y: 250, r: 13, colour: "green", id: 5},
+        {x: 370, y: 355, r: 13, colour: "#87CEEB", id: 1},
+        {x: 370, y: 410, r: 13, colour: "#87CEEB", id: 2},
+        {x: 370, y: 465, r: 13, colour: "#87CEEB", id: 3},
+        {x: 370, y: 520, r: 13, colour: "#87CEEB", id: 4},
+        {x: 370, y: 575, r: 13, colour: "#87CEEB", id: 5},
         {x: 370, y: 302, r: 12, colour: "orange", id: 23,}
     ]);
 
@@ -125,6 +125,7 @@ const PlayMaker = () => {
         }
         //the rest of the circles represent the players
         else {
+            console.log(r);
             ctx.lineWidth = "4";
             ctx.strokeStyle = "white"
             ctx.beginPath();
@@ -203,7 +204,7 @@ const PlayMaker = () => {
         console.log("load from local storage formation" + counter);
         let json = localStorage.getItem("formations" + counter);
         if (null === json) {
-            return;
+            return 'empty';
         }
         console.log("Loading from localStorage.");
         const formation = JSON.parse(json);
@@ -229,7 +230,10 @@ const PlayMaker = () => {
 
     const NextFormation = () => {
 
-
+        if (loadFromLocal() === 'empty') {
+            alert('You must make a change to the frame before moving onto the next');
+            return
+        }
         increment();
         //currentFrame[0]++;
         console.log("Loading next formation" + counter);
@@ -243,8 +247,6 @@ const PlayMaker = () => {
     return (
 
         <div className="playMaker">
-            <p>This is the make a play page</p>
-
             <div className="main-content">
 
                 {<canvas

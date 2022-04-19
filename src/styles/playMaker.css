@@ -1,25 +1,24 @@
-.main-content {
+.playMaker {
     display: flex;
-    position: absolute;
-    right: 100px;
-    flex-direction: column;
-    justify-content: right;
+    align-items: center;
+    justify-content: center;
     min-height: 100vh;
 }
 
 .canvasButtons {
     display: flex;
     position: relative;
-    bottom: -75px;
-    left: 40%;
-    margin: 0 -110px;
+    bottom: -52px;
+    left: 58px;
+
+
 }
 
 .basketballCourt {
     background-position: center;
-    margin-top: 80px;
     background-color: #282c34;
     border-style: solid;
+    border-color: gold;
     transform: scale(1.2);
     background-image: url("/src/Basketball_court_fiba.svg");
     background-size: 90% 87%;
