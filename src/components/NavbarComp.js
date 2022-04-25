@@ -1,18 +1,20 @@
 import React from 'react';
 import {withAuthenticator} from '@aws-amplify/ui-react';
-import {Button, Container, Form, FormControl, Nav, Navbar, NavDropdown} from "react-bootstrap";
+import {Button, Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {BrowserRouter as Router, Link, Route, Routes} from "react-router-dom";
 import Home from "../pages/Home";
 import Play from "../pages/playMaker";
+import View from "../pages/ViewPlays";
 
 
 function NavbarComp({signOut}) {
-
+    /*navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0*/
 
     return (
         <Router>
-            <div>
-                <Navbar bg="light" expand="lg">
+            <div
+                class='"d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-dark border-bottom box-shadow"'>
+                <Navbar bg="navbar navbar-dark bg-success" expand="lg">
                     <Container fluid>
                         <Navbar.Brand href="#">Navbar scroll</Navbar.Brand>
                         <Navbar.Toggle aria-controls="navbarScroll"/>
@@ -23,21 +25,11 @@ function NavbarComp({signOut}) {
                                 navbarScroll
                             >
                                 <Nav.Link as={Link} to={"/"}>Home</Nav.Link>
-                                <Nav.Link as={Link} to={"/playMaker"}>Make a play</Nav.Link>
-                                <NavDropdown title="Link" id="navbarScrollingDropdown">
-                                    <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
-                                    <NavDropdown.Item href="#action4">Another action</NavDropdown.Item>
-                                    <NavDropdown.Divider/>
-                                    <NavDropdown.Item href="#action5">
-                                        Something else here
-                                    </NavDropdown.Item>
-                                </NavDropdown>
-                                <Nav.Link href="#" disabled>
-                                    Link
-                                </Nav.Link>
+                                <Nav.Link as={Link} to={"/playMaker"}>Create</Nav.Link>
+                                <Nav.Link as={Link} to={"/viewPlays"}>View Plays</Nav.Link>
                             </Nav>
 
-                            <button onClick={signOut}>Sign out</button>
+                            <Button class="btn btn-success btn-lg" onClick={signOut}>Sign out</Button>
                         </Navbar.Collapse>
                     </Container>
                 </Navbar>
@@ -47,6 +39,7 @@ function NavbarComp({signOut}) {
                 <Routes>
                     <Route path="/" element={<Home/>}/>
                     <Route path="/playMaker" element={<Play/>}/>
+                    <Route path="/ViewPlays" element={<View/>}/>
                 </Routes>
             </div>
         </Router>

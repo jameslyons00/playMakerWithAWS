@@ -1,28 +1,23 @@
-.playMaker {
+/*.playMaker {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-}
+}*/
 
-.canvasButtons {
-    display: flex;
-    position: relative;
-    bottom: -52px;
-    left: 58px;
-
-
-}
 
 .basketballCourt {
     background-position: center;
-    background-color: #282c34;
+    background-color: #D3D3D3;
     border-style: solid;
-    border-color: gold;
+    border-color: #007A33;
+    /*
     transform: scale(1.2);
+    */
     background-image: url("/src/Basketball_court_fiba.svg");
     background-size: 90% 87%;
     height: 600px;
     width: 400px;
     background-repeat: no-repeat;
 }
+

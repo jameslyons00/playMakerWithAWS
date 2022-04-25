@@ -1,33 +1,37 @@
-import React, {useRef, useState, useEffect} from "react";
-import {IconContext} from "react-icons";
-import {
-    BsFillArrowLeftCircleFill,
-    BsFillArrowRightCircleFill,
-    BsFillPlusCircleFill,
-    BsFillTrashFill,
-    BsPlayBtn
-} from "react-icons/bs";
+import React, {createContext, useEffect, useRef, useState} from "react";
 import "../styles/playMaker.css";
+import * as PropTypes from "prop-types";
+import {FrameButton} from "./frameButton";
+import UserListComp from "../components/UserListComp";
 
+FrameButton.propTypes = {
+    onMouseDown: PropTypes.func,
+    onMouseDown1: PropTypes.func,
+    onMouseDown2: PropTypes.func,
+    counter: PropTypes.number,
+    total: PropTypes.number,
+    onMouseDown3: PropTypes.func,
+    onMouseDown4: PropTypes.func
+};
 const PlayMaker = () => {
-
-
+    
     const canvas = useRef();
     let ctx = null;
 
 
+
     const [circles, setCircles] = useState([
-        {x: 370, y: 30, r: 13, colour: "green", id: 1},
-        {x: 370, y: 85, r: 13, colour: "green", id: 2},
-        {x: 370, y: 140, r: 13, colour: "green", id: 3},
-        {x: 370, y: 195, r: 13, colour: "green", id: 4},
-        {x: 370, y: 250, r: 13, colour: "green", id: 5},
-        {x: 370, y: 355, r: 13, colour: "#87CEEB", id: 1},
-        {x: 370, y: 410, r: 13, colour: "#87CEEB", id: 2},
-        {x: 370, y: 465, r: 13, colour: "#87CEEB", id: 3},
-        {x: 370, y: 520, r: 13, colour: "#87CEEB", id: 4},
-        {x: 370, y: 575, r: 13, colour: "#87CEEB", id: 5},
-        {x: 370, y: 302, r: 12, colour: "orange", id: 23,}
+        {x: 370, y: 30, r: 13, colour: '#17408B', id: 1},
+        {x: 370, y: 85, r: 13, colour: '#17408B', id: 2},
+        {x: 370, y: 140, r: 13, colour: '#17408B', id: 3},
+        {x: 370, y: 195, r: 13, colour: '#17408B', id: 4},
+        {x: 370, y: 250, r: 13, colour: '#17408B', id: 5},
+        {x: 370, y: 355, r: 13, colour: '#007A33', id: 1},
+        {x: 370, y: 410, r: 13, colour: '#007A33', id: 2},
+        {x: 370, y: 465, r: 13, colour: '#007A33', id: 3},
+        {x: 370, y: 520, r: 13, colour: '#007A33', id: 4},
+        {x: 370, y: 575, r: 13, colour: '#007A33', id: 5},
+        {x: 370, y: 302, r: 12, colour: 'orange', id: 23,}
     ]);
 
     const [counter, setCounter] = useState(1);
@@ -41,6 +45,7 @@ const PlayMaker = () => {
     let startY = null;
     let localCount = 0;
 
+
     // initialize the canvas context
     useEffect(() => {
         // dynamically assign the width and height to canvas
@@ -49,16 +54,19 @@ const PlayMaker = () => {
         canvasEle.height = canvasEle.clientHeight;
 
         // get context of the canvas
-
         ctx = canvasEle.getContext('2d');
     });
 
+
     useEffect(() => {
-        loadFromLocal();
+        loadFromLocal()
         draw();
         countLocal();
-
     },);
+
+    useEffect(() => {
+        draw();
+    }, [circles])
 
 
     const countLocal = () => {
@@ -143,14 +151,14 @@ const PlayMaker = () => {
         else {
             //console.log(r);
             ctx.lineWidth = "4";
-            ctx.strokeStyle = "white"
+            ctx.strokeStyle = "#000000"
             ctx.beginPath();
             ctx.fillStyle = backgroundColor;
             ctx.arc(x, y, r, 0, 2 * Math.PI);
             ctx.stroke();
             ctx.fill();
             ctx.beginPath();
-            ctx.fillStyle = 'black';
+            ctx.fillStyle = 'white';
             ctx.font = "15px Arial";
             ctx.textAlign = 'center';
             ctx.fillText(id, x, y + 5);
@@ -207,7 +215,7 @@ const PlayMaker = () => {
         handleMouseUp(e);
     };
 
-    const saveToLocal = () => {
+    const addToLocal = () => {
         if (formationChange === false) {
             alert("You must change the current frame before making a new one");
             return
@@ -261,58 +269,61 @@ const PlayMaker = () => {
         increment();
     }
 
-    const play = () => {
+    const save = () => {
+
+        //temp counter
+        let loopCounter = 1
+        const formationArray = [];
+        let output = '';
 
 
-        Object.keys(localStorage).forEach(function (key) {
+        for (let i = 1; i < (total); i++) { //get each frame in order
+            let formation = localStorage.getItem('formations' + i); //get the frame from storage
+            formationArray.push(formation);//add the formation to our array
 
-            setTimeout(() => {
-                if (key.includes('formation')) {
-                    loadFromLocal();
-                    draw();
-                    increment();
-                }
-            }, 1000);
+        }
 
-        })
-        console.log('finished');
+        output = formationArray.join(';');
+        console.log(JSON.stringify(output));
     }
 
 
     return (
 
-        <div className="playMaker">
-            <div className="main-content">
 
-                {<canvas
-                    className='basketballCourt'
-                    ref={canvas}
-                    onMouseDown={handleMouseDown}
-                    onMouseMove={handleMouseMove}
-                    onMouseUp={handleMouseUp}
-                    onMouseOut={handleMouseOut}>
-                </canvas>}
-                <IconContext.Provider value={{color: "blue", size: '35px'}}>
-                    <div className="canvasButtons">
-                        <button onMouseDown={PreviousFormation}><BsFillArrowLeftCircleFill/>
-                        </button>
-                        <button onMouseDown={saveToLocal}><BsFillPlusCircleFill/>
-                        </button>
-                        <button onMouseDown={NextFormation}><BsFillArrowRightCircleFill/>
-                        </button>
-                        <button>
-                            <BsFillTrashFill/>
-                        </button>
-                        <button>{counter + " of " + total}</button>
-                        <button onMouseDown={play}>
-                            <BsPlayBtn/>
-                        </button>
+        <div class="container-fluid bg-white">
+            <div class='row'>
+                <nav class='col-md-2 bg-light'>
+                    <div class="sidebar-sticky">
 
+                        {/*
+                        <UserListComp circles={circles}onClick={setCircles}></UserListComp>
+*/}
                     </div>
-                </IconContext.Provider>
-            </div>
+                </nav>
 
+                <div class='col-md-auto offset-2'>
+                    {<canvas
+                        className='basketballCourt'
+                        ref={canvas}
+                        onMouseDown={handleMouseDown}
+                        onMouseMove={handleMouseMove}
+                        onMouseUp={handleMouseUp}
+                        onMouseOut={handleMouseOut}>
+                    </canvas>}
+
+
+                    <div class='card-body'>
+                        <FrameButton onMouseDown={PreviousFormation} onMouseDown1={addToLocal}
+                                     onMouseDown2={NextFormation}
+                                     counter={counter} total={total} onMouseDown4={save}/>
+                    </div>
+                </div>
+
+            </div>
         </div>
+
+
     )
 }
 export default PlayMaker;

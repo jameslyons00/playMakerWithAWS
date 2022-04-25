@@ -1,11 +1,15 @@
 import React from "react";
-import {Link} from "react-router-dom";
+import UserListComp from "../components/UserListComp";
 
 const Home = () => {
+
+
     return (
 
         <div className="home">
             <p>This is the home page</p>
+            <UserListComp/>
+
 
         </div>
     )
