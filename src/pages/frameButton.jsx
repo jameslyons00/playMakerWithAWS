@@ -5,7 +5,8 @@ import {
     BsFillArrowRightCircleFill,
     BsFillPlusCircleFill,
     BsSave,
-    BsPlayBtn
+    BsPlayBtn,
+    BsFillTrashFill
 } from "react-icons/bs";
 import React from "react";
 
@@ -23,7 +24,7 @@ export function FrameButton(props) {
             </button>
             <button class='btn btn-dark'>{props.counter + " of " + props.total}</button>
             <button class='btn btn-dark' onMouseDown={props.onMouseDown3}>
-                <BsPlayBtn/>
+                <BsFillTrashFill/>
             </button>
 
         </div>

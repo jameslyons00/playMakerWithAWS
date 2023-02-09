@@ -11,52 +11,42 @@ function UserListComp({viewCircles, onClick}) {
     const [selected, setSelected] = useState(0);
 
 
-    const fetchUserPlays = useCallback(async () => {
+    const fetchUserPlays = useCallback(async () => {//optimizes re-render when passed as dependency in use effect hook
 
         try {
-            const userPlayData = await API.graphql(graphqlOperation(listUserPlays));
-            const userPlayList = userPlayData.data.listUserPlays.items;
-            console.log('Play List', userPlayList);
-            localStorage.setItem('plays', JSON.stringify(userPlayList));
-            setPlays(userPlayList);
+            const userPlayData = await API.graphql(graphqlOperation(listUserPlays));//imports the listUser play fn that we created
+            const userPlayList = userPlayData.data.listUserPlays.items;//gets just the list of plays
+            console.log('Play List', userPlayList);//to see the data
+            setPlays(userPlayList);//set the state of the plays with the result using useState hook
 
-
-        } catch (error) {
+        } catch (error) {//catch and display any potential errors
             console.log('error fetching data', error);
         }
-
     }, []);
 
 
     useEffect(() => {
-        //if
-        if (localStorage.getItem('plays') === true) {
-            setPlays(JSON.parse(localStorage.getItem('plays')));
-        }
-        fetchUserPlays()
-            .catch(console.error);
 
-    }, [fetchUserPlays]);
+        void fetchUserPlays()
+        //  .catch(console.error);
+
+    }, []);
+
 
     const getSelectedPlay = () => {
 
         let dbString = (plays[selected].formations);
-
-        //let dbCircles=[];
         formationArray.current = dbString.split(";");
         let result = formationArray.current;
-        console.log(result);
-        /*const formation = JSON.parse(formationArray.current[0]);
-        for (let i = 0; i < formation.length; i++) {
-            dbCircles[i] = formation[i];
-        }
-        console.log('MY circles', dbCircles);*/
+        console.log("I SELECTED THIS: " + selected);
         return result;
     };
 
-    const handleOnClick = () => {
+    const handleOnClick = (index) => {
+        console.log("This is the index: " + index)
+        setSelected(index);
+        console.log("Selected is now" + selected);
         let dbResult = getSelectedPlay();
-        console.log();
         console.log("result from on click", dbResult);
         frameCount.current = formationArray.current.length;
         console.log(frameCount.current);
@@ -73,13 +63,12 @@ function UserListComp({viewCircles, onClick}) {
                 plays.map((play, index) => {
                     return <>
                         <Card>
+
                             <div class='card-body'>
                                 <li>{play.name}</li>
                                 <li>owner: {play.owner}</li>
-                                <Button class='btn btn-link' onClick={function () {
-                                    handleOnClick();
-                                    setSelected(index);
-                                }}>view{index + 1}</Button>
+                                <Button class='btn btn-link'
+                                        onClick={() => handleOnClick(index)}>view</Button>
                             </div>
                         </Card>
                     </>

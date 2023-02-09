@@ -14,7 +14,7 @@ FrameButton.propTypes = {
     onMouseDown4: PropTypes.func
 };
 const PlayMaker = () => {
-    
+
     const canvas = useRef();
     let ctx = null;
 
@@ -34,8 +34,8 @@ const PlayMaker = () => {
         {x: 370, y: 302, r: 12, colour: 'orange', id: 23,}
     ]);
 
-    const [counter, setCounter] = useState(1);
     const [total, setTotal] = useState(1);
+    const [counter, setCounter] = useState(1);
     const increment = () => setCounter(counter + 1);
     const decrement = () => setCounter(counter - 1);
     let formationChange = false;
@@ -56,6 +56,7 @@ const PlayMaker = () => {
         // get context of the canvas
         ctx = canvasEle.getContext('2d');
     });
+
 
 
     useEffect(() => {
@@ -94,17 +95,17 @@ const PlayMaker = () => {
         );
 
 
-        circles.map((info) => drawFillRect(info));
+        circles.map((info) => drawFillCirc(info));
     };
 
 
     // draw circle with background
-    const drawFillRect = (info, style = {}) => {
+    const drawFillCirc = (info, style = {}) => {
         const {x, y, r, colour, id} = info;
         const {backgroundColor = colour} = style;
 
-        //this id represents the basketball
-        if (id === 23) {
+
+        if (id === 23) { //this id represents the basketball circle
             ctx.lineWidth = '4';
             ctx.strokeStyle = 'black';
             ctx.beginPath();
@@ -113,39 +114,30 @@ const PlayMaker = () => {
             ctx.stroke();
             ctx.fill();
 
-
-            //lines on bball
-            //verticle line
-            ctx.lineWidth = '2';
+            ctx.lineWidth = '2';//verticle line
             ctx.beginPath();
             ctx.moveTo(x, y - 12);
             ctx.lineTo(x, y + 12);
             ctx.stroke();
             ctx.closePath();
 
-            //horizontal line
-            ctx.beginPath();
+            ctx.beginPath();//horizontal line
             ctx.moveTo(x - 12, y);
             ctx.lineTo(x + 12, y);
             ctx.stroke();
             ctx.closePath();
 
-            //left arc
-            ctx.beginPath();
+            ctx.beginPath();//left arc
             ctx.arc(x - 22, y, r + 5, 0.6, 5.7, true);
-            //ctx.moveTo(x-9, y+12);
-            //ctx.lineTo(x-9, y-12);
             ctx.stroke();
             ctx.closePath();
 
-            //right arc
-            ctx.beginPath();
+            ctx.beginPath(); //right arc
             ctx.arc(x + 22, y, r + 5, -2.5, 2.5, true);
             //ctx.moveTo(x+9, y-12);
             //ctx.lineTo(x+9, y+12);
             ctx.stroke();
             ctx.closePath();
-
         }
         //the rest of the circles represent the players
         else {
@@ -167,7 +159,7 @@ const PlayMaker = () => {
 
     };
 
-    // identify the click event in the rectangle
+    // identify the click event in the circle
     const hitBox = (mx, my) => {
         let isTarget = null;
         for (let i = 0; i < circles.length; i++) {
@@ -175,17 +167,16 @@ const PlayMaker = () => {
 
             let dx = circ.x - mx;
             let dy = circ.y - my;
-            if (
+            if (//determine if click is inside the circle
                 dx * dx + dy * dy < circ.r * circ.r
 
-            ) {
+            ) {//do this if it is..
                 dragTarget = circ;
                 isTarget = true;
                 break;
             }
         }
         formationChange = true;
-        setCircles(circles);
         return isTarget;
     };
 
@@ -205,7 +196,7 @@ const PlayMaker = () => {
         startY = mouseY;
         dragTarget.x += dx;
         dragTarget.y += dy;
-        draw();
+        draw();//redraw the circles as they are moved
     };
     const handleMouseUp = () => {
         dragTarget = null;
@@ -245,46 +236,47 @@ const PlayMaker = () => {
         }
     };
 
-    const PreviousFormation = () => {
-        if (counter > 1) {
-            loadFromLocal();
-            draw();
-            decrement()
+    const PreviousFormation = () => {//when left arrow is clicked
+        if (counter > 1) {//if the current frame isn't the first
+            decrement()//decrease the counter
+            loadFromLocal();//load the previous
+            draw();//draw it on the canvas
         }
-
-
     };
 
-
-    const NextFormation = () => {
-        if (loadFromLocal() === 'empty') {
-            alert('You are at the last frame');
-            return
+    const NextFormation = () => {//when right arrow button is clicked
+        if (loadFromLocal() === 'empty') {//check if the frame exits
+            alert('You are at the last frame');//if not, the current frame is the last
+            return //exit from this function
         }
+        loadFromLocal();//loads the current frame from local storage
+        draw();//draws the circles
+        increment();//increase the current frame count
+    }
 
-        //currentFrame[0]++;
-        //console.log("Loading next formation" + counter);
-        loadFromLocal();
-        draw();
-        increment();
+    const deleteFromLocal = () => {
+
+        for (let i = 1; i < (total); i++) {
+            localStorage.removeItem('formations' + i);
+        }
+        setTotal(1);
+        setCounter(1);
     }
 
     const save = () => {
 
-        //temp counter
-        let loopCounter = 1
         const formationArray = [];
         let output = '';
-
 
         for (let i = 1; i < (total); i++) { //get each frame in order
             let formation = localStorage.getItem('formations' + i); //get the frame from storage
             formationArray.push(formation);//add the formation to our array
 
         }
-
-        output = formationArray.join(';');
+        output = formationArray.join(';');//create string by concatenating the elements of array
         console.log(JSON.stringify(output));
+        return JSON.stringify(output);//JSON string so it can be added to database
+
     }
 
 
@@ -315,7 +307,7 @@ const PlayMaker = () => {
 
                     <div class='card-body'>
                         <FrameButton onMouseDown={PreviousFormation} onMouseDown1={addToLocal}
-                                     onMouseDown2={NextFormation}
+                                     onMouseDown2={NextFormation} onMouseDown3={deleteFromLocal}
                                      counter={counter} total={total} onMouseDown4={save}/>
                     </div>
                 </div>
